@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --ink: #1d2433;
+      --muted: #4a5468;
+      --accent: #1f3a5f;
+      --accent-ink: #ffffff;
+      --line: #d7dce5;
+      --soft: #f4f6f9;
+      --error: #b42318;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: var(--ink); background: #fff; line-height: 1.5; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+    .label { font-size: 12px; letter-spacing: .12em; font-weight: 700; color: var(--accent); }
+    h1 { font-size: 30px; line-height: 1.2; margin: 8px 0 12px; }
+    h2 { font-size: 20px; margin: 32px 0 8px; }
+    p.intro { color: var(--muted); font-size: 17px; margin: 0 0 8px; }
+    fieldset { border: 0; padding: 0; margin: 0 0 22px; }
+    legend { font-weight: 700; margin-bottom: 8px; padding: 0; }
+    .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .opt input { position: absolute; opacity: 0; }
+    .opt span { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; background: #fff; }
+    .opt input:checked + span { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    .opt input:focus-visible + span { outline: 3px solid #8fb3e0; outline-offset: 2px; }
+    .stmt { padding: 16px 0; border-top: 1px solid var(--line); }
+    .stmt .n { color: var(--muted); font-weight: 700; margin-right: 6px; }
+    .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
+    .scale .opt span { width: 100%; text-align: center; border-radius: 8px; padding: 8px 4px; font-size: 13px; }
+    input[type=text], input[type=email], textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+    textarea { min-height: 70px; }
+    .note { font-size: 14px; color: var(--muted); background: var(--soft); padding: 8px 12px; border-radius: 8px; margin-top: 8px; display: none; }
+    .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); }
+    .consent input { margin-top: 4px; }
+    button { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 14px 22px; font-size: 16px; font-weight: 700; cursor: pointer; }
+    button[disabled] { opacity: .6; cursor: wait; }
+    .error { color: var(--error); font-weight: 700; margin: 12px 0; min-height: 1em; }
+    .progress { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+    .result { display: none; }
+    .score { font-size: 44px; font-weight: 700; color: var(--accent); margin: 4px 0; }
+    .band { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .bar { margin: 10px 0; }
+    .bar .row { display: flex; justify-content: space-between; font-size: 14px; }
+    .bar .track { height: 10px; background: var(--soft); border-radius: 999px; overflow: hidden; margin-top: 4px; }
+    .bar .fill { height: 100%; background: var(--accent); }
+    .tip { background: var(--soft); border-left: 4px solid var(--accent); padding: 12px 14px; border-radius: 6px; margin: 16px 0; }
+    a.cta { display: inline-block; background: var(--accent); color: var(--accent-ink); text-decoration: none; padding: 14px 22px; border-radius: 8px; font-weight: 700; margin-top: 8px; }
+    @media (max-width: 520px) {
+      h1 { font-size: 25px; }
+      .scale { grid-template-columns: 1fr; }
+      .scale .opt span { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div id="form-view">
+    <div class="label" id="label"></div>
+    <h1 id="headline"></h1>
+    <p class="intro" id="intro"></p>
+
+    <form id="f" novalidate>
+      <h2>About you</h2>
+      <div id="profile"></div>
+
+      <h2>How often is each statement true for you?</h2>
+      <p class="progress" id="progress"></p>
+      <div id="statements"></div>
+
+      <h2>Where should we send your results?</h2>
+      <fieldset>
+        <legend><label for="name">First name</label></legend>
+        <input type="text" id="name" autocomplete="given-name" maxlength="60" required>
+      </fieldset>
+      <fieldset>
+        <legend><label for="email">Email</label></legend>
+        <input type="email" id="email" autocomplete="email" maxlength="120" required>
+      </fieldset>
+      <label class="consent">
+        <input type="checkbox" id="consent">
+        <span>I agree to receive my results and a few follow-up emails with practical tips from Jeff Rosales. My answers are kept confidential, and I can unsubscribe anytime.</span>
+      </label>
+
+      <p class="error" id="error" role="alert"></p>
+      <button type="submit" id="submit">See My Results</button>
+    </form>
+  </div>
+
+  <div class="result" id="result-view" aria-live="polite">
+    <div class="label">YOUR RESULTS</div>
+    <h1 id="r-title"></h1>
+    <div class="score" id="r-score"></div>
+    <div class="band" id="r-band"></div>
+    <p id="r-text"></p>
+    <div id="r-areas"></div>
+    <div class="tip"><b>One thing to try this week:</b> <span id="r-tip"></span></div>
+    <p>We've also emailed your results to you.</p>
+    <p id="r-cta-text"></p>
+    <a class="cta" id="r-cta" target="_blank" rel="noopener">Book a Free Discovery Call</a>
+  </div>
+</div>
+
+<script>
+  var CFG = <?!= cfgJson ?>;
+
+  function el(tag, attrs, text) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  document.getElementById('label').textContent = CFG.label;
+  document.getElementById('headline').textContent = CFG.headline;
+  document.getElementById('intro').textContent = CFG.intro;
+
+  // Profile questions
+  var profileBox = document.getElementById('profile');
+  CFG.profile.forEach(function (q) {
+    var fs = el('fieldset');
+    if (q.type === 'choice') {
+      fs.appendChild(el('legend', null, q.q));
+      var opts = el('div', { 'class': 'opts' });
+      q.options.forEach(function (o) {
+        var lab = el('label', { 'class': 'opt' });
+        var inp = el('input', { type: 'radio', name: 'p_' + q.id, value: o });
+        lab.appendChild(inp);
+        lab.appendChild(el('span', null, o));
+        opts.appendChild(lab);
+      });
+      fs.appendChild(opts);
+      if (q.note) {
+        var note = el('div', { 'class': 'note', id: 'note_' + q.id }, q.note.text);
+        fs.appendChild(note);
+        fs.addEventListener('change', function () {
+          var v = (document.querySelector('input[name="p_' + q.id + '"]:checked') || {}).value;
+          note.style.display = q.note.when.indexOf(v) >= 0 ? 'block' : 'none';
+        });
+      }
+    } else {
+      var lg = el('legend');
+      lg.appendChild(el('label', { 'for': 'p_' + q.id }, q.q));
+      fs.appendChild(lg);
+      fs.appendChild(el('textarea', { id: 'p_' + q.id, maxlength: '300' }));
+    }
+    profileBox.appendChild(fs);
+  });
+
+  // Statements
+  var stBox = document.getElementById('statements');
+  CFG.statements.forEach(function (t, i) {
+    var fs = el('fieldset', { 'class': 'stmt' });
+    var lg = el('legend');
+    lg.appendChild(el('span', { 'class': 'n' }, (i + 1) + '.'));
+    lg.appendChild(document.createTextNode(t));
+    fs.appendChild(lg);
+    var sc = el('div', { 'class': 'scale' });
+    CFG.scale.forEach(function (s, v) {
+      var lab = el('label', { 'class': 'opt' });
+      lab.appendChild(el('input', { type: 'radio', name: 's_' + i, value: String(v + 1) }));
+      lab.appendChild(el('span', null, s));
+      sc.appendChild(lab);
+    });
+    fs.appendChild(sc);
+    stBox.appendChild(fs);
+  });
+
+  function updateProgress() {
+    var done = 0;
+    CFG.statements.forEach(function (_, i) { if (document.querySelector('input[name="s_' + i + '"]:checked')) done++; });
+    document.getElementById('progress').textContent = done + ' of ' + CFG.statements.length + ' answered';
+  }
+  stBox.addEventListener('change', updateProgress);
+  updateProgress();
+
+  document.getElementById('f').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var err = document.getElementById('error');
+    err.textContent = '';
+
+    var answers = CFG.statements.map(function (_, i) {
+      var c = document.querySelector('input[name="s_' + i + '"]:checked');
+      return c ? Number(c.value) : 0;
+    });
+    var missing = answers.indexOf(0);
+    if (missing >= 0) { err.textContent = 'Please answer statement ' + (missing + 1) + '.'; return; }
+
+    var profile = {};
+    for (var k = 0; k < CFG.profile.length; k++) {
+      var q = CFG.profile[k];
+      if (q.type === 'choice') {
+        var c = document.querySelector('input[name="p_' + q.id + '"]:checked');
+        profile[q.id] = c ? c.value : '';
+      } else {
+        profile[q.id] = document.getElementById('p_' + q.id).value;
+      }
+      if (q.required && !profile[q.id]) { err.textContent = 'Please answer: ' + q.q; return; }
+    }
+
+    var payload = {
+      key: CFG.key,
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      consent: document.getElementById('consent').checked,
+      profile: profile,
+      answers: answers
+    };
+    if (!payload.name.trim()) { err.textContent = 'Please enter your first name.'; return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email.trim())) { err.textContent = 'Please enter a valid email address.'; return; }
+    if (!payload.consent) { err.textContent = 'Please tick the consent box to receive your results.'; return; }
+
+    var btn = document.getElementById('submit');
+    btn.disabled = true;
+    btn.textContent = 'Calculating…';
+
+    google.script.run
+      .withSuccessHandler(showResult)
+      .withFailureHandler(function (e) {
+        btn.disabled = false;
+        btn.textContent = 'See My Results';
+        err.textContent = (e && e.message) ? e.message.replace(/^Exception:\s*/, '') : 'Something went wrong. Please try again.';
+      })
+      .submit(payload);
+  });
+
+  function showResult(r) {
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('result-view').style.display = 'block';
+    document.getElementById('r-title').textContent = CFG.name;
+    document.getElementById('r-score').textContent = r.score + '/50';
+    document.getElementById('r-band').textContent = r.band;
+    document.getElementById('r-text').textContent = r.text;
+    document.getElementById('r-tip').textContent = r.tip;
+    document.getElementById('r-cta-text').textContent = CFG.resultCta;
+    document.getElementById('r-cta').href = CFG.bookingUrl;
+    var box = document.getElementById('r-areas');
+    r.areaScores.forEach(function (a) {
+      var b = el('div', { 'class': 'bar' });
+      var row = el('div', { 'class': 'row' });
+      row.appendChild(el('span', null, a.area));
+      row.appendChild(el('b', null, a.score + '/' + a.max));
+      b.appendChild(row);
+      var tr = el('div', { 'class': 'track' });
+      var fill = el('div', { 'class': 'fill' });
+      fill.style.width = Math.round(a.score / a.max * 100) + '%';
+      tr.appendChild(fill);
+      b.appendChild(tr);
+      box.appendChild(b);
+    });
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
