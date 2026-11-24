@@ -224,7 +224,7 @@ You already show many of the behaviors employers expect from day one. Your next 
 >
 > One client described it like this:
 >
-> *"Through our sessions, I developed a clearer mindset, stronger discipline, and a renewed commitment to my education and career path."* — Brandon
+> *"Through our sessions, I developed a clearer mindset, stronger discipline, and a renewed commitment to my education and career path."* — Jakob, Entrepreneur
 >
 > Jeff
 > Learn more: coachjeffrosales.com/early-career-foundations
@@ -270,4 +270,4 @@ Target for the first 90 days: a 30–40% completion rate on the assessment page,
 ## Notes
 
 - **Privacy:** Collecting names and emails means the Philippine Data Privacy Act applies. Keep the consent line, include an unsubscribe link in every email, and only use the data for results and coaching updates.
-- **Testimonials:** The emails only use quotes already published on your site (Mito and Brandon). Replace or add more as new clients agree.
+- **Testimonials:** The emails only use quotes already published on your site (Mito and Jakob). Replace or add more as new clients agree.
