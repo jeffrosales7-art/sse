@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --indigo: #2F2B7F; --indigo-deep: #221F63; --orange: #F79E43; --orange-soft: #FFF2E3;
+    --slate: #2C4777; --mist: #F0F5FA; --white: #FFFFFF; --ink: #1B1E33; --muted: #5A6377;
+    --line: #DCE3ED; --ok: #217A4B; --ok-soft: #E5F4EC; --warn: #8A4D0E; --danger: #B3261E;
+    --display: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
+    --body: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.55; color: var(--ink); background: var(--mist); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; letter-spacing: -0.01em; color: var(--indigo); }
+  h1 { font-size: 28px; font-weight: 800; }
+  h2 { font-size: 20px; font-weight: 700; }
+  h3 { font-size: 16px; font-weight: 700; }
+  p { margin: 0; }
+  a { color: var(--slate); }
+  button, textarea { font-family: inherit; }
+  :focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; border-radius: 6px; }
+  .hidden { display: none !important; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+  .ico { width: 17px; height: 17px; flex: 0 0 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Top bar */
+  .top { background: var(--indigo); color: var(--white); padding: 14px max(20px, env(safe-area-inset-left)) 14px max(20px, env(safe-area-inset-right)); }
+  .top-in { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .brand { font: 800 20px var(--display); letter-spacing: -0.01em; }
+  .brand span { color: var(--orange); }
+  .brand small { display: block; font: 500 12px var(--body); letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.75; }
+  .top .who { margin-left: auto; text-align: right; min-width: 0; }
+  .top .who b { display: block; font-size: 15px; }
+  .top .who span { font-size: 13px; opacity: 0.8; }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tbtn { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12); color: var(--white); border: 1px solid rgba(255,255,255,0.25); border-radius: 99px; padding: 7px 14px; font: 600 13px var(--body); cursor: pointer; text-decoration: none; }
+  .tbtn:hover { background: rgba(255,255,255,0.2); }
+
+  /* Layout */
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 22px max(20px, env(safe-area-inset-left)) 60px max(20px, env(safe-area-inset-right)); display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 26px; }
+  nav.side { position: sticky; top: 16px; align-self: start; display: grid; gap: 4px; }
+  nav.side button { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 10px 12px; border-radius: 12px; font: 600 15px var(--body); color: var(--muted); cursor: pointer; text-align: left; }
+  nav.side button:hover { background: var(--white); color: var(--indigo); }
+  nav.side button.on { background: var(--white); color: var(--indigo); box-shadow: inset 3px 0 0 var(--orange); }
+  nav.side .count { margin-left: auto; background: var(--orange); color: var(--indigo-deep); font-size: 12px; font-weight: 700; border-radius: 99px; padding: 0 8px; }
+  @media (max-width: 860px) {
+    .wrap { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    nav.side { position: static; display: flex; overflow-x: auto; gap: 6px; padding-bottom: 4px; }
+    nav.side button { white-space: nowrap; padding: 8px 12px; background: var(--white); }
+    nav.side button.on { box-shadow: inset 0 -3px 0 var(--orange); }
+    .top .who { margin-left: 0; text-align: left; width: 100%; order: 3; }
+  }
+  main { min-width: 0; }
+  .view-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .view-head p { margin-top: 4px; }
+
+  /* Cards */
+  .card { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-bottom: 14px; min-width: 0; }
+  .card-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .card-head h3 { margin-right: auto; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 900px) { .grid2 { grid-template-columns: minmax(0, 1fr); } .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; min-width: 0; }
+  .kpi .lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .kpi b { display: block; font: 800 26px/1.15 var(--display); color: var(--indigo); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kpi span { font-size: 13px; color: var(--muted); }
+  .kpi.done b { color: var(--ok); }
+
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; white-space: nowrap; background: var(--mist); color: var(--muted); }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .pill.warm { background: var(--orange-soft); color: var(--warn); }
+  .pill.ink { background: #E7E6F5; color: var(--indigo); }
+  .tag { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--orange); }
+
+  .field { padding: 10px 0; border-top: 1px solid var(--line); }
+  .field:first-of-type { border-top: 0; padding-top: 0; }
+  .field .k { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .field .v { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .field .v.empty { color: var(--muted); font-style: italic; }
+  .meta { font-size: 13px; color: var(--muted); }
+
+  /* Notes */
+  .note { margin-top: 12px; background: var(--mist); border-radius: 14px; padding: 12px; }
+  .note label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ok); margin-bottom: 6px; }
+  .note textarea { width: 100%; min-height: 70px; resize: vertical; border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font-size: 15px; background: var(--white); color: var(--ink); }
+  .note .row { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .note .hint { font-size: 12px; color: var(--muted); }
+  .grade-sel { width: 100%; max-width: 320px; border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font: 15px var(--body); background: var(--white); color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 99px; padding: 8px 16px; font: 700 14px var(--body); background: var(--indigo); color: var(--white); cursor: pointer; text-decoration: none; }
+  .btn:disabled { opacity: 0.55; cursor: default; }
+  .btn.line { background: var(--white); color: var(--indigo); border: 1px solid var(--line); }
+  .btn.orange { background: var(--orange); color: var(--indigo-deep); }
+  .btn.small { padding: 6px 12px; font-size: 13px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  /* Switch */
+  .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); background: none; border: 0; padding: 0; }
+  .switch .tr { width: 38px; height: 22px; border-radius: 99px; background: #C9D1DE; position: relative; transition: background .15s; }
+  .switch .tr::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--white); transition: left .15s; }
+  .switch[aria-checked="true"] { color: var(--ok); }
+  .switch[aria-checked="true"] .tr { background: var(--ok); }
+  .switch[aria-checked="true"] .tr::after { left: 19px; }
+
+  /* Scores */
+  .score-row { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.5fr) 40px 92px; gap: 12px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+  .score-row:first-child { border-top: 0; }
+  .bar { height: 10px; background: var(--mist); border-radius: 99px; overflow: hidden; }
+  .bar div { height: 100%; background: var(--indigo); border-radius: 99px; }
+  .bar.end div { background: var(--orange); }
+  .score-row b { font: 800 16px var(--display); color: var(--indigo); text-align: right; font-variant-numeric: tabular-nums; }
+  @media (max-width: 600px) { .score-row { grid-template-columns: minmax(0, 1fr) 40px; } .score-row .bar { grid-column: 1 / -1; grid-row: 2; } .score-row .pill { display: none; } }
+
+  .qrow { display: grid; grid-template-columns: 34px minmax(0, 1fr) 118px; gap: 12px; align-items: start; padding: 9px 0; border-top: 1px solid var(--line); }
+  .qrow:first-child { border-top: 0; }
+  .qrow .id { font-size: 12px; font-weight: 700; color: var(--muted); padding-top: 2px; }
+  .dots { display: flex; gap: 4px; justify-content: flex-end; padding-top: 3px; }
+  .dots i { width: 16px; height: 16px; border-radius: 5px; background: var(--mist); border: 1px solid var(--line); }
+  .dots i.on { background: var(--indigo); border-color: var(--indigo); }
+  .dots.low i.on { background: var(--orange); border-color: var(--orange); }
+  .qtext { background: var(--orange-soft); border-radius: 12px; padding: 10px 12px; margin: 6px 0 4px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  @media (max-width: 600px) { .qrow { grid-template-columns: minmax(0, 1fr); gap: 4px; } .qrow .id { display: none; } .dots { justify-content: flex-start; } }
+
+  .attn { display: grid; gap: 8px; }
+  .attn button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 11px 14px; font: 600 14px var(--body); color: var(--ink); cursor: pointer; }
+  .attn button:hover { border-color: var(--orange); }
+  .attn .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--orange); flex: 0 0 9px; }
+  .attn .go { margin-left: auto; color: var(--slate); }
+
+  .table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .table th { text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .table td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .table-wrap { overflow-x: auto; }
+  .table tr.sdone td { color: var(--muted); }
+  .table tr.sdone td b { color: var(--muted); font-weight: 600; text-decoration: line-through; text-decoration-color: rgba(90,99,119,.4); }
+  .table td:first-child { width: 96px; white-space: nowrap; }
+
+  .files { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
+  .file-row { display: flex; align-items: center; gap: 12px; }
+  .file-ico { width: 40px; height: 40px; border-radius: 12px; background: var(--orange-soft); color: var(--warn); display: grid; place-items: center; flex: 0 0 40px; }
+  .drop { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; border: 2px dashed var(--line); border-radius: 16px; padding: 18px 14px; background: var(--mist); }
+  .drop.over { border-color: var(--orange); background: var(--orange-soft); }
+  .drop .ico { width: 24px; height: 24px; color: var(--slate); }
+  .paste { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .paste input { flex: 1 1 240px; min-width: 0; border: 1px solid var(--line); border-radius: 99px; padding: 8px 14px; font: 14px var(--body); background: var(--white); color: var(--ink); }
+  .empty-box { text-align: center; color: var(--muted); padding: 26px 16px; border: 1px dashed var(--line); border-radius: 16px; background: transparent; }
+  .loading { display: grid; place-items: center; min-height: 60vh; color: var(--muted); }
+  .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--indigo); animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .sync { cursor: default; background: rgba(255,255,255,0.06); }
+  .mini-spin { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35); border-top-color: var(--orange); animation: spin 0.8s linear infinite; }
+  .toast { position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--ink); color: var(--white); padding: 10px 18px; border-radius: 99px; font-weight: 600; font-size: 14px; z-index: 50; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  @media print { .top-actions, nav.side, .note .row, .switch, .btn { display: none !important; } .wrap { display: block; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">coachjeff<span>.</span><small>Coach dashboard</small></div>
+    <div class="top-actions" id="topActions"></div>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+<div class="wrap">
+  <nav class="side" id="nav" aria-label="Dashboard sections"></nav>
+  <main id="main"><div class="loading"><div><div class="spinner"></div>Loading…</div></div></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+  var COACH_KEY = <?!= JSON.stringify(coachKey) ?>;
+  var D = null, VIEW = 'overview';
+  var ICONS = {
+    home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+    pen: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    clip: '<rect x="5" y="4" width="14" height="17.5" rx="2"/><path d="M9 4V2.5h6V4M9 11l2 2 4-4M9 17h6"/>',
+    book: '<path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    sheet: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>',
+    down: '<path d="M12 3v12M6 11l6 6 6-6M4 21h16"/>',
+    up: '<path d="M12 17V5M6 9l6-6 6 6M4 21h16"/>',
+    refresh: '<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>',
+    ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+    check: '<path d="M5 12l5 5L20 7"/>',
+    pulse: '<path d="M22 12h-4l-3 8-6-16-3 8H2"/>',
+    print: '<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M6 14h12v7H6z"/>',
+    play: '<rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m10 9 5 3-5 3z"/>'
+  };
+  function icon(n) { return '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function val(v) { var t = String(v == null ? '' : v).trim(); return t ? '<div class="v">' + esc(t) + '</div>' : '<div class="v empty">Not filled in</div>'; }
+  function field(k, v) { return '<div class="field"><div class="k">' + esc(k) + '</div>' + val(v) + '</div>'; }
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { t.classList.remove('show'); }, msg.length > 60 ? 5000 : 2600); }
+  function fmtDate(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || '')); if (!m) return String(s || '');
+    var d = new Date(+m[1], +m[2] - 1, +m[3]);
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+  function fmtStamp(s) { var t = String(s || ''); var d = fmtDate(t); var time = /\d{2}:\d{2}/.exec(t.slice(10)); return d + (time ? ', ' + time[0] : ''); }
+  function errText(e) { return String((e && e.message) || e || 'Something went wrong').replace(/^Exception:\s*/, ''); }
+
+  /* Speed: the last data is kept on this device and shown instantly; fresh data loads in the background. */
+  var CACHE_KEY = 'coachDash:' + COACH_KEY.slice(0, 8), pending = 0;
+  function saveCache() { try { localStorage.setItem(CACHE_KEY, JSON.stringify(D)); } catch (e) { /* storage full or blocked */ } }
+  function readCache() { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) { return null; } }
+  function syncing(on) { pending = Math.max(0, pending + (on ? 1 : -1)); var el = $('sync'); if (el) el.classList.toggle('hidden', pending === 0); }
+  function typing() { var a = document.activeElement; return a && /^(TEXTAREA|INPUT)$/.test(a.tagName) && a.value !== (a.getAttribute('data-orig') || ''); }
+  function call(fn, args, ok, fail) {
+    syncing(true);
+    var r = google.script.run.withSuccessHandler(function (d) { syncing(false); if (d) { var keep = d; if (d.mail) { keep = Object.assign({}, d); delete keep.mail; } D = keep; saveCache(); } ok && ok(d); })
+      .withFailureHandler(function (e) { syncing(false); (fail || function (x) { toast(errText(x)); })(e); });
+    r[fn].apply(r, [COACH_KEY].concat(args || []));
+  }
+  /* Saves in the background after the screen has already been updated. */
+  function quietCall(fn, args, msg) {
+    saveCache(); render(); if (msg) toast(msg);
+    call(fn, args, function (d) {
+      if (!typing()) render();
+      if (d && d.mail) toast(d.mail.error ? d.mail.error : d.mail.invited ? (d.mail.existing ? 'Calendar invite already sent to ' : 'Calendar invite sent to ') + d.mail.to + ' for ' + d.mail.when : (d.mail.note ? d.mail.note + ' ' : '') + 'Emailed ' + d.mail.to + (d.mail.cc ? ' (cc ' + d.mail.cc + ')' : '') + (d.mail.from ? ' from ' + d.mail.from : ''));
+    }, function (e) { toast(errText(e) + ' Reloading…'); load(true); });
+  }
+  function load(quiet) {
+    var cached = !D && readCache();
+    if (cached) { D = cached; render(); }
+    else if (!quiet && !D) $('main').innerHTML = '<div class="loading"><div><div class="spinner"></div>Loading…</div></div>';
+    call('coachData', [quiet === true], function () { if (!typing()) render(); if (quiet === true) toast('Up to date'); }, function (e) {
+      if (D) { toast(errText(e)); return; }
+      $('main').innerHTML = '<div class="card"><h2>Could not load</h2><p class="muted" style="margin-top:6px;">' + esc(errText(e)) + '</p></div>';
+    });
+  }
+  function findBy(list, key, val) { return (list || []).filter(function (x) { return String(x[key]) === String(val); })[0]; }
+
+  /* ---------- Derived ---------- */
+  function counts() {
+    var c = { notes: 0 };
+    c.diagDone = !!(D.diagnostic && D.diagnostic.submittedOn);
+    c.goals = D.goals.length;
+    c.chDone = D.challenges.filter(function (x) { return x.done; }).length;
+    c.cases = (D.cases.items || []);
+    c.casesDone = c.cases.filter(function (x) { return x.status === 'Submitted'; }).length;
+    c.finalDone = !!(D.final && D.final.submittedOn);
+    c.requested = D.sessions.filter(function (s) { return /^requested$/i.test(String(s.status).trim()); });
+    return c;
+  }
+  function attention() {
+    var out = [];
+    D.sessions.forEach(function (s) { if (/^requested$/i.test(String(s.status).trim())) out.push({ view: 'sessions', text: s.title + ' requested for ' + fmtDate(s.date) + ', ' + (s.time || '') + ': confirm it' }); });
+    (D.cases.items || []).forEach(function (c) { if (c.status === 'Submitted' && !c.level && !String(c.feedback || '').trim()) out.push({ view: 'assess', text: 'Case ' + c.module + '.' + c.num + ' was submitted and needs a grade' }); });
+    D.goals.forEach(function (g) { if (!String(g.coachNotes || '').trim()) out.push({ view: 'goals', text: 'Goal "' + trim(g.goal, 60) + '" has no coach note' }); });
+    D.challenges.forEach(function (c) { if (c.done && !String(c.coachNotes || '').trim()) out.push({ view: 'modules', text: 'Module ' + c.module + ' challenge done: add a note' }); });
+    if (D.tracker && D.tracker.enabled) (D.tracker.weeks || []).forEach(function (w) { if (!String(w.coachNotes || '').trim()) out.push({ view: 'tracker', text: 'Tracker week ending ' + fmtDate(w.week) + ' (' + w.total + '/' + w.max + ') has no coach note' }); });
+    if (D.final && D.final.submittedOn) D.final.reflections.forEach(function (q) { if (!String(q.coachNotes || '').trim()) out.push({ view: 'assess', text: 'Final reflection ' + q.id + ' has no coach note' }); });
+    return out;
+  }
+  function trim(s, n) { s = String(s || '').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+  /* ---------- Frame ---------- */
+  var SECTIONS = [
+    ['overview', 'Overview', 'home'], ['diagnostic', 'Diagnostic', 'chart'], ['goals', 'Goals & plan', 'target'],
+    ['assess', 'Assessment', 'clip'], ['modules', 'Modules', 'book'], ['sessions', 'Sessions', 'cal'], ['tracker', 'Tracker', 'pulse']
+  ];
+  function render() {
+    var p = D.participant;
+    $('who').innerHTML = '<b>' + esc(p.name || 'Participant') + '</b><span>' + esc([p.role, p.org].filter(Boolean).join(' · ')) + '</span>';
+    $('topActions').innerHTML =
+      '<a class="tbtn" href="' + esc(D.sheetUrl) + '" target="_blank" rel="noopener">' + icon('sheet') + 'Open Sheet</a>' +
+      '<a class="tbtn" href="' + esc(D.xlsxUrl) + '" target="_blank" rel="noopener">' + icon('down') + 'Download all (.xlsx)</a>' +
+      '<button class="tbtn" onclick="window.print()">' + icon('print') + 'Print / PDF</button>' +
+      '<button class="tbtn" onclick="load(true)">' + icon('refresh') + 'Refresh</button>' +
+      '<span class="tbtn sync' + (pending ? '' : ' hidden') + '" id="sync" aria-live="polite"><span class="mini-spin"></span>Syncing</span>';
+    var n = attention().length;
+    $('nav').innerHTML = SECTIONS.map(function (s) {
+      return '<button class="' + (VIEW === s[0] ? 'on' : '') + '" onclick="go(\'' + s[0] + '\')">' + icon(s[2]) + s[1] + (s[0] === 'overview' && n ? '<span class="count">' + n + '</span>' : '') + '</button>';
+    }).join('');
+    var fn = { overview: vOverview, diagnostic: vDiagnostic, goals: vGoals, assess: vAssess, modules: vModules, sessions: vSessions, tracker: vTracker }[VIEW];
+    $('main').innerHTML = fn();
+  }
+  function go(v) { VIEW = v; render(); window.scrollTo(0, 0); }
+  function head(title, sub) { return '<div class="view-head"><div><h1>' + esc(title) + '</h1>' + (sub ? '<p class="muted">' + sub + '</p>' : '') + '</div><span class="meta">Updated ' + esc(fmtStamp(D.loadedAt)) + '</span></div>'; }
+
+  function noteBox(target, id, current, label) {
+    var did = 'n_' + target + '_' + String(id).replace(/[^\w]/g, '_');
+    return '<div class="note"><label for="' + did + '">' + esc(label || 'Coach note (visible to participant)') + '</label>' +
+      '<textarea id="' + did + '" data-orig="' + esc(current || '') + '" oninput="this.nextElementSibling.querySelector(\'.btn\').disabled = this.value === this.getAttribute(\'data-orig\')">' + esc(current || '') + '</textarea>' +
+      '<div class="row"><button class="btn small" disabled onclick="saveNote(\'' + target + '\',\'' + esc(id) + '\',\'' + did + '\', this)">' + icon('check') + 'Save note</button>' +
+      '<span class="hint">' + (String(current || '').trim() ? 'Saved in the Sheet' : 'No note yet') + '</span></div></div>';
+  }
+  function saveNote(target, id, did, btn) {
+    var v = $(did).value, p = String(id).split('|'), item = null, field = 'coachNotes';
+    if (target === 'journal') item = findBy(D.journal, 'id', id);
+    else if (target === 'goal') item = findBy(D.goals, 'id', id);
+    else if (target === 'plan') item = findBy(D.plan, 'id', id);
+    else if (target === 'challenge') item = findBy(D.challenges, 'module', id);
+    else if (target === 'final') item = findBy(D.final.reflections, 'id', id);
+    else if (target === 'week') item = findBy((D.tracker || {}).weeks, 'week', id);
+    else if (target === 'case') { field = 'feedback'; item = (D.cases.items || []).filter(function (c) { return c.module === p[0] && c.num === p[1]; })[0]; }
+    if (item) item[field] = v;
+    document.activeElement && document.activeElement.blur && document.activeElement.blur();
+    quietCall('coachSave', [target, id, v], 'Note saved');
+  }
+  function sw(kind, id, on, label) {
+    return '<button class="switch" role="switch" aria-checked="' + on + '" onclick="release(\'' + kind + '\',\'' + esc(id) + '\',' + !on + ', this)"><span class="tr"></span>' + esc(label || (on ? 'Released' : 'Locked')) + '</button>';
+  }
+  function release(kind, id, on, el) {
+    var p = String(id).split('|');
+    var item = kind === 'module' ? findBy(D.modules, 'number', id) : (D.cases.items || []).filter(function (c) { return c.module === p[0] && c.num === p[1]; })[0];
+    if (item) item.released = on;
+    quietCall('coachRelease', [kind, id, on], (on ? 'Released' : 'Locked') + (kind === 'module' ? (on ? '. Sending the calendar invite…' : '. Emailing ' + (D.participant.email || 'the participant') + '…') : ''));
+  }
+
+  /* ---------- Overview ---------- */
+  function vOverview() {
+    var c = counts(), att = attention(), dg = D.diagnostic, first = String(D.participant.name || '').split(' ')[0] || 'the participant';
+    var html = head('Overview', esc(D.program) + ' · everything ' + esc(first) + ' has done so far');
+    html += '<div class="grid3" style="margin-bottom:18px;">' +
+      kpi('Diagnostic', c.diagDone ? 'Done' : 'Pending', c.diagDone ? 'Submitted ' + fmtStamp(dg.submittedOn) : (dg.due ? 'Due ' + fmtDate(dg.due) : ''), c.diagDone) +
+      kpi('SMART goals', c.goals + ' / 3', c.goals ? 'Latest ' + fmtDate(D.goals[D.goals.length - 1].updated) : 'None yet', c.goals >= 3) +
+      kpi('Weekly challenges', c.chDone + ' / ' + D.challenges.length, 'Completed', c.chDone && c.chDone === D.challenges.length) +
+      kpi('Case studies', c.casesDone + ' / ' + c.cases.length, 'Submitted', c.cases.length && c.casesDone === c.cases.length) +
+      kpi('Final assessment', c.finalDone ? 'Done' : (D.final.open ? 'Open' : 'Locked'), c.finalDone ? 'Submitted ' + fmtStamp(D.final.submittedOn) : (D.final.open ? 'Not submitted yet' : 'Opens after Module 4'), c.finalDone) +
+      '</div>';
+    html += '<div class="grid2"><div class="card"><div class="card-head"><h3>Needs your attention</h3><span class="pill ' + (att.length ? 'warm' : 'ok') + '">' + att.length + '</span></div>' +
+      (att.length ? '<div class="attn">' + att.slice(0, 8).map(function (a) { return '<button onclick="go(\'' + a.view + '\')"><span class="dot"></span>' + esc(a.text) + '<span class="go">' + icon('ext') + '</span></button>'; }).join('') + (att.length > 8 ? '<p class="meta">+' + (att.length - 8) + ' more</p>' : '') + '</div>' : '<p class="muted">You are all caught up.</p>') + '</div>';
+    html += '<div class="card"><div class="card-head"><h3>Diagnostic scores</h3>' + (c.diagDone ? '' : '<span class="pill">Not submitted</span>') + '</div>' + scoreRows(dg.enabled ? dg.summary : []) +
+      '<div class="actions" style="margin-top:10px;"><button class="btn line small" onclick="go(\'diagnostic\')">See all answers</button></div></div></div>';
+    var next = D.sessions.filter(function (s) { return !/^(done|completed|cancel)/i.test(String(s.status)) && (!s.date || s.date >= D.loadedAt.slice(0, 10)); })[0];
+    if (next) html += '<div class="card"><div class="card-head"><h3>Next session</h3><span class="pill ink">' + esc(next.status || 'Upcoming') + '</span></div><p><b>' + esc(next.title) + '</b></p><p class="muted">' + esc(next.date ? fmtDate(next.date) : next.dateNote) + (next.time ? ' · ' + esc(next.time) : '') + (next.mode ? ' · ' + esc(next.mode) : '') + '</p></div>';
+    return html;
+  }
+  function kpi(lbl, big, sub, done) { return '<div class="kpi' + (done ? ' done' : '') + '"><div class="lbl">' + esc(lbl) + '</div><b>' + esc(big) + '</b><span>' + esc(sub || '') + '</span></div>'; }
+  function scoreRows(summary) {
+    if (!summary || !summary.length) return '<p class="muted">No scores yet.</p>';
+    return summary.map(function (a) {
+      var cls = a.reading === 'Strength' ? 'ok' : a.reading === 'Focus area' ? 'warm' : '';
+      return '<div class="score-row"><span>' + esc(a.area) + '</span><div class="bar"><div style="width:' + (a.avg == null ? 0 : a.avg / 5 * 100) + '%"></div></div><b>' + (a.avg == null ? '–' : a.avg.toFixed(1)) + '</b><span class="pill ' + cls + '">' + esc(a.reading || '–') + '</span></div>';
+    }).join('');
+  }
+
+  /* ---------- Diagnostic ---------- */
+  function vDiagnostic() {
+    var dg = D.diagnostic;
+    if (!dg.enabled) return head('Diagnostic') + '<div class="empty-box">The diagnostic is turned off in Config.</div>';
+    var html = head('Diagnostic', dg.submittedOn ? 'Submitted ' + esc(fmtStamp(dg.submittedOn)) + ' · ratings 1 (Rarely) to 5 (Consistently)' : 'Not submitted yet' + (dg.due ? ' · due ' + esc(fmtDate(dg.due)) : ''));
+    html += '<div class="card"><h3 style="margin-bottom:6px;">Scores by priority</h3>' + scoreRows(dg.summary) + '</div>';
+    var areas = [];
+    dg.questions.forEach(function (q) { if (areas.indexOf(q.area) === -1) areas.push(q.area); });
+    areas.forEach(function (area) {
+      var s = dg.summary.filter(function (x) { return x.area === area; })[0];
+      html += '<div class="card"><div class="card-head"><h3>' + esc(area) + '</h3>' + (s && s.avg != null ? '<span class="pill ' + (s.reading === 'Strength' ? 'ok' : s.reading === 'Focus area' ? 'warm' : '') + '">' + s.avg.toFixed(1) + ' · ' + esc(s.reading) + '</span>' : '') + '</div><div>';
+      dg.questions.filter(function (q) { return q.area === area; }).forEach(function (q) {
+        var a = dg.answers[q.id];
+        if (q.type === 'text') { html += '<div class="qrow" style="grid-template-columns:34px minmax(0,1fr);"><span class="id">' + esc(q.id) + '</span><div><div>' + esc(q.text) + '</div>' + (String(a || '').trim() ? '<div class="qtext">' + esc(a) + '</div>' : '<div class="meta"><i>No answer</i></div>') + '</div></div>'; return; }
+        var v = parseInt(a, 10) || 0;
+        html += '<div class="qrow"><span class="id">' + esc(q.id) + '</span><span>' + esc(q.text) + '</span><span class="dots' + (v && v <= 2 ? ' low' : '') + '" title="' + (v ? v + ' of 5, ' + esc(dg.scale[v - 1]) : 'No answer') + '">' +
+          [1, 2, 3, 4, 5].map(function (i) { return '<i class="' + (i <= v ? 'on' : '') + '"></i>'; }).join('') + '</span></div>';
+      });
+      html += '</div></div>';
+    });
+    return html;
+  }
+
+  /* ---------- Goals & plan ---------- */
+  function vGoals() {
+    var html = head('Goals & 90-day plan', 'Agreed goal, initial SMART goals and action plan, with your notes');
+    html += agreedGoalEditor();
+    html += '<h2 style="margin:22px 0 12px;">Initial SMART goals <span class="muted small">(set before coaching · ' + D.goals.length + ' of 3)</span></h2>';
+    if (!D.goals.length) html += '<div class="empty-box" style="margin-bottom:14px;">No goals yet.</div>';
+    D.goals.forEach(function (g, i) {
+      var prog = g.baseline || g.current ? 'Baseline ' + (g.baseline || '–') + '/10 → now ' + (g.current || '–') + '/10' : 'No ratings yet';
+      html += '<div class="card"><div class="card-head"><span class="tag">Goal ' + (i + 1) + '</span><h3>' + esc(g.goal) + '</h3><span class="pill ink">' + esc(prog) + '</span></div>' +
+        field('Measurable', g.measure) + field('Achievable', g.achievable) + field('Relevant', g.relevant) + field('Time-bound', g.target ? fmtDate(g.target) : '') +
+        (String(g.notes || '').trim() ? field('Progress notes', g.notes) : '') +
+        '<p class="meta" style="margin-top:6px;">Created ' + esc(fmtStamp(g.created)) + (g.updated !== g.created ? ' · updated ' + esc(fmtStamp(g.updated)) : '') + '</p>' +
+        noteBox('goal', g.id, g.coachNotes) + '</div>';
+    });
+    html += '<h2 style="margin:22px 0 12px;">90-day action plan <span class="muted small">(' + D.plan.length + ')</span></h2>';
+    if (!D.plan.length) html += '<div class="empty-box">No commitments yet.</div>';
+    D.plan.forEach(function (p, i) {
+      html += '<div class="card"><div class="card-head"><span class="tag">Commitment ' + (i + 1) + '</span><h3>' + esc(p.commitment) + '</h3><span class="pill ' + (p.status === 'Done' ? 'ok' : p.status === 'In progress' ? 'warm' : '') + '">' + esc(p.status || 'Not started') + '</span></div>' +
+        field('Why it matters', p.why) + field('First 30 days', p.d30) + field('Days 31–60', p.d60) + field('Days 61–90', p.d90) + field('Success measure', p.measure) + field('Support needed', p.support) +
+        noteBox('plan', p.id, p.coachNotes) + '</div>';
+    });
+    return html;
+  }
+
+
+  /* ---------- Assessment ---------- */
+  var GRADE_LEVELS = ['Exceeds expectations', 'Meets expectations', 'Developing'];
+  function gradeBox(c) {
+    var id = String(c.module + '_' + c.num).replace(/[^\w]/g, '_'), who = esc(String(D.participant.name || 'the participant').split(' ')[0]);
+    if (c.status !== 'Submitted') return '<p class="muted" style="margin-top:10px;">Draft only. You can grade this after ' + who + ' submits it.</p>';
+    var state = c.gradeSentOn ? '<span class="pill ok">' + icon('check') + 'Sent to ' + who + ' · ' + esc(fmtStamp(c.gradeSentOn)) + '</span>'
+      : c.level ? '<span class="pill warm">Saved. ' + who + ' will see it and get an email ' + (c.gradeDue ? 'at ' + esc(fmtStamp(c.gradeDue)) : 'shortly') + '</span>'
+      : '<span class="hint">' + who + ' will see the grade and get an email no earlier than 2 hours after he submitted' + (c.submittedOn ? ' (' + esc(fmtStamp(c.submittedOn)) + ')' : '') + '.</span>';
+    return '<div class="note"><label for="gl_' + id + '">Grade</label>' +
+      '<select id="gl_' + id + '" class="grade-sel"><option value="">Choose a level</option>' + GRADE_LEVELS.map(function (l) { return '<option' + (c.level === l ? ' selected' : '') + '>' + esc(l) + '</option>'; }).join('') + '</select>' +
+      '<label for="gf_' + id + '" style="margin-top:10px;">Feedback (' + who + ' will read this)</label>' +
+      '<textarea id="gf_' + id + '" style="min-height:160px;">' + esc(c.feedback || '') + '</textarea>' +
+      '<div class="row"><button class="btn small" onclick="saveGrade(\'' + esc(c.module) + '\',\'' + esc(c.num) + '\',\'' + id + '\', this)">' + icon('check') + (c.level ? 'Update grade' : 'Save grade') + '</button>' + state + '</div></div>';
+  }
+  function saveGrade(mod, num, id, btn) {
+    var level = $('gl_' + id).value, fb = $('gf_' + id).value.trim();
+    if (!level) { toast('Choose a level first'); $('gl_' + id).focus(); return; }
+    if (!fb) { toast('Write the feedback first'); $('gf_' + id).focus(); return; }
+    btn.disabled = true; btn.textContent = 'Saving…';
+    call('coachGradeCase', [mod, num, level, fb], function (d) {
+      render();
+      var c = (D.cases.items || []).filter(function (x) { return x.module === mod && x.num === num; })[0] || {};
+      toast(d && d.gradeNote ? d.gradeNote : c.gradeSentOn ? (d && d.mail && d.mail.error ? d.mail.error : 'Grade sent. He can see it now' + (d && d.mail && d.mail.to ? ' and was emailed at ' + d.mail.to : '')) : 'Grade saved. It will be sent at ' + fmtStamp(c.gradeDue));
+    }, function (e) { btn.disabled = false; btn.textContent = 'Save grade'; toast(errText(e)); });
+  }
+  function vAssess() {
+    var html = head('Assessment', 'Case studies and final assessment');
+    var items = D.cases.items || [];
+    html += '<h2 style="margin:4px 0 12px;">Case studies</h2>';
+    if (!items.length) html += '<div class="empty-box" style="margin-bottom:14px;">No cases set up. Add rows in the Case Studies tab.</div>';
+    items.forEach(function (c) {
+      var st = c.status === 'Submitted' ? '<span class="pill ink">Submitted ' + esc(fmtDate(c.submittedOn)) + '</span>' : c.status === 'Draft' ? '<span class="pill warm">Draft</span>' : '<span class="pill">Not started</span>';
+      var title = c.type === 'own' ? (c.myTitle || 'His own case') : (c.title || '(no title yet)');
+      html += '<div class="card"><div class="card-head"><span class="tag">Module ' + esc(c.module) + ' · Case ' + esc(c.num) + ' · ' + esc(c.typeLabel) + '</span><h3>' + esc(title) + '</h3>' + st + sw('case', c.module + '|' + c.num, c.released) + '</div>';
+      if (c.type !== 'own') html += field('Scenario', c.scenario) + (c.link ? '<p style="margin:6px 0;"><a href="' + esc(c.link) + '" target="_blank" rel="noopener">Case material</a></p>' : '');
+      var hasText = c.answers && c.answers.some(function (a) { return String(a || '').trim(); });
+      if (c.file) html += '<div class="field"><div class="k">Uploaded file' + (c.file.uploadedOn ? ' · ' + esc(fmtStamp(c.file.uploadedOn)) : '') + '</div><div class="v">' + (c.file.url ? '<a href="' + esc(c.file.url) + '" target="_blank" rel="noopener">' + esc(c.file.name) + '</a>' : esc(c.file.name)) + '</div></div>';
+      if (hasText || c.file) {
+        if (hasText) html += c.questions.map(function (q, i) { return '<div class="field"><div class="k">' + (i + 1) + '. ' + esc(q) + '</div>' + val(c.answers[i]) + '</div>'; }).join('');
+        html += gradeBox(c);
+      } else html += '<p class="muted" style="margin-top:6px;">No response yet.' + (c.released ? '' : ' Turn on Released to open this case for him.') + '</p>';
+      html += '</div>';
+    });
+    var f = D.final;
+    html += '<h2 style="margin:22px 0 12px;">Final assessment</h2>';
+    if (!f.enabled) return html + '<div class="empty-box">The final assessment is turned off in Config.</div>';
+    if (!f.submittedOn) {
+      var answered = Object.keys(f.answers || {}).filter(function (k) { return String(f.answers[k]).trim(); }).length;
+      html += '<div class="card"><div class="card-head"><h3>Status</h3><span class="pill ' + (f.open ? 'warm' : '') + '">' + (f.open ? 'Open, not submitted' : 'Locked') + '</span></div><p class="muted">' +
+        (f.open ? answered + ' of ' + f.questions.length + ' ratings saved so far.' : 'It opens ' + (f.opens ? 'on ' + esc(fmtDate(f.opens)) : 'when Module 4 is released') + '. Set FINAL_OPENS in Config to choose a date.') + '</p></div>';
+      return html;
+    }
+    var hasStart = f.growth.some(function (a) { return a.start != null; });
+    html += '<div class="card"><div class="card-head"><h3>Growth by priority</h3><span class="pill ok">Submitted ' + esc(fmtStamp(f.submittedOn)) + '</span></div><div class="table-wrap"><table class="table"><thead><tr><th>Priority</th>' + (hasStart ? '<th>Start</th>' : '') + '<th>Final</th><th>Change</th></tr></thead><tbody>' +
+      f.growth.map(function (a) { var ch = a.change; return '<tr><td>' + esc(a.area) + '</td>' + (hasStart ? '<td>' + (a.start == null ? '–' : a.start.toFixed(1)) + '</td>' : '') + '<td><b>' + (a.end == null ? '–' : a.end.toFixed(1)) + '</b></td><td style="color:' + (ch > 0 ? 'var(--ok)' : ch < 0 ? 'var(--danger)' : 'var(--muted)') + ';font-weight:700;">' + (ch == null ? '–' : (ch > 0 ? '+' : '') + ch.toFixed(1)) + '</td></tr>'; }).join('') +
+      '</tbody></table></div></div>';
+    html += '<div class="card"><h3 style="margin-bottom:8px;">Written reflection</h3>' + f.reflections.map(function (q, i) {
+      return '<div class="field"><div class="k">' + (i + 1) + '. ' + esc(q.text) + '</div>' + val(q.answer) + noteBox('final', q.id, q.coachNotes) + '</div>';
+    }).join('') + '</div>';
+    return html;
+  }
+
+  /* ---------- Modules ---------- */
+  function slideLinks(url) {
+    if (!url) return '<span class="meta">No slides linked. Add the Google Slides link in the Modules tab (Slides Link column).</span>';
+    var m = /docs\.google\.com\/presentation\/d\/([\w-]+)/.exec(url), f = /drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/.exec(url);
+    var out = '<a class="btn line small" href="' + esc(url) + '" target="_blank" rel="noopener">' + icon('ext') + 'Open slides</a>';
+    if (m) out += '<a class="btn line small" href="https://docs.google.com/presentation/d/' + m[1] + '/export/pdf" target="_blank" rel="noopener">' + icon('down') + 'PDF</a>' +
+      '<a class="btn line small" href="https://docs.google.com/presentation/d/' + m[1] + '/export/pptx" target="_blank" rel="noopener">' + icon('down') + 'PowerPoint</a>';
+    else if (f) out += '<a class="btn line small" href="https://drive.google.com/uc?export=download&id=' + f[1] + '" target="_blank" rel="noopener">' + icon('down') + 'Download</a>';
+    return out;
+  }
+  function moduleFiles(m) {
+    var n = esc(m.number), who = esc(String(D.participant.name || 'The participant').split(' ')[0]);
+    var html = '<div class="files"><div class="k" style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Module file</div>';
+    if (m.slides) {
+      var isDrive = /drive\.google\.com/.test(m.slides);
+      html += '<div class="file-row"><span class="file-ico">' + icon('book') + '</span><div style="min-width:0;flex:1;"><b>' + (isDrive ? 'Uploaded file' : 'Google Slides') + '</b><div class="meta">' + (m.released ? 'Showing in ' + who + '\'s Learn tab' : who + ' will see it when you release this module') + '</div></div></div>' +
+        '<div class="actions" style="margin-top:8px;">' + slideLinks(m.slides) +
+        '<button class="btn line small" onclick="pickFile(\'' + n + '\')">' + icon('refresh') + 'Replace</button>' +
+        '<button class="btn line small" style="color:var(--danger);" onclick="setLink(\'' + n + '\', \'\', this)">Remove</button></div>';
+    } else {
+      html += '<div class="drop" id="drop_' + n + '" ondragover="event.preventDefault(); this.classList.add(\'over\')" ondragleave="this.classList.remove(\'over\')" ondrop="dropFile(event, \'' + n + '\')">' +
+        '<div>' + icon('up') + '</div><b>Upload the module file</b><span class="meta">PDF or PowerPoint, up to 30 MB. Drag it here or</span>' +
+        '<button class="btn small" onclick="pickFile(\'' + n + '\')">Choose file</button></div>' +
+        '<div class="paste"><input type="url" id="url_' + n + '" placeholder="or paste a Google Slides / Drive link"><button class="btn line small" onclick="setLink(\'' + n + '\', $(\'url_' + n + '\').value, this)">Save link</button></div>';
+    }
+    html += moduleExtras(m);
+    html += '<input type="file" id="file_' + n + '" class="hidden" accept=".pdf,.ppt,.pptx,.key,.doc,.docx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" onchange="uploadFile(\'' + n + '\', this.files[0])"></div>';
+    return html;
+  }
+  /* Extra files for a module: videos, readings, links. Saved in the Resources column as "Label | link". */
+  function parseRes(line) { var i = String(line).lastIndexOf('|'); return i === -1 ? { label: line, url: /^https?:/i.test(line) ? line : '' } : { label: line.slice(0, i).trim(), url: line.slice(i + 1).trim() }; }
+  function moduleExtras(m) {
+    var n = esc(m.number), who = esc(String(D.participant.name || 'The participant').split(' ')[0]), list = m.resources || [];
+    var html = '<div class="k" style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;">Additional files (videos, readings)</div>';
+    if (UPLOADING[m.number]) html += '<div class="file-row"><span class="file-ico">' + icon('up') + '</span><div style="min-width:0;flex:1;"><b>' + esc(UPLOADING[m.number]) + '</b><div class="meta">Uploading… keep this page open.</div></div></div>';
+    list.forEach(function (line, i) {
+      var r = parseRes(line);
+      html += '<div class="file-row" style="margin-bottom:6px;"><span class="file-ico">' + icon(/youtu|vimeo|\.mp4|\.mov|video/i.test(line) ? 'play' : 'book') + '</span><div style="min-width:0;flex:1;"><b>' + esc(r.label) + '</b>' +
+        '<div class="meta" style="overflow-wrap:anywhere;">' + (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">Open</a>' : 'No link') + '</div></div>' +
+        '<button class="btn line small" style="color:var(--danger);" onclick="removeRes(\'' + n + '\',' + i + ', this)">Remove</button></div>';
+    });
+    if (!list.length && !UPLOADING[m.number]) html += '<p class="muted" style="margin:0 0 8px;">None yet. ' + who + ' sees these under Resources in the module.</p>';
+    html += '<div class="paste" style="flex-wrap:wrap;"><input type="text" id="rlabel_' + n + '" placeholder="Title, e.g. Delegation demo video" maxlength="120" style="flex:1 1 200px;">' +
+      '<button class="btn small" onclick="$(\'rfile_' + n + '\').click()">' + icon('up') + 'Upload file</button></div>' +
+      '<div class="paste"><input type="url" id="rurl_' + n + '" placeholder="or paste a YouTube / Google Drive link"><button class="btn line small" onclick="addRes(\'' + n + '\', this)">Add link</button></div>' +
+      '<p class="meta" style="margin-top:6px;">Upload up to 30 MB (video, PDF, slides). For a longer video, upload it to Google Drive or YouTube and paste the link.</p>' +
+      '<input type="file" id="rfile_' + n + '" class="hidden" accept="video/*,audio/*,.pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" onchange="uploadRes(\'' + n + '\', this.files[0])">';
+    return html;
+  }
+  var UPLOADING = {};
+  function addRes(n, btn) {
+    var url = $('rurl_' + n).value.trim(), label = $('rlabel_' + n).value.trim();
+    if (!url) { toast('Paste the link first'); $('rurl_' + n).focus(); return; }
+    if (btn) btn.disabled = true;
+    call('coachAddResource', [n, label, url], function () { render(); toast('Added to Module ' + n); }, function (e) { if (btn) btn.disabled = false; toast(errText(e)); });
+  }
+  function uploadRes(n, f) {
+    if (!f) return;
+    if (f.size > 30 * 1024 * 1024) { toast('That file is ' + Math.round(f.size / 1048576) + ' MB. The limit is 30 MB. Upload it to Google Drive or YouTube and paste the link instead.'); $('rfile_' + n).value = ''; return; }
+    var label = $('rlabel_' + n).value.trim(), r = new FileReader();
+    UPLOADING[n] = label || f.name; render();
+    r.onload = function () {
+      var b64 = String(r.result).split(',')[1] || '';
+      call('coachUploadResource', [n, label, f.name, f.type || 'application/octet-stream', b64], function () { delete UPLOADING[n]; render(); toast('Uploaded and added to Module ' + n); }, function (e) { delete UPLOADING[n]; render(); toast(errText(e)); });
+    };
+    r.onerror = function () { delete UPLOADING[n]; render(); toast('Could not read that file.'); };
+    r.readAsDataURL(f);
+  }
+  function removeRes(n, i, btn) {
+    var m = findBy(D.modules, 'number', n), line = m && (m.resources || [])[i];
+    if (!line) return;
+    if (!btn.getAttribute('data-sure')) { btn.setAttribute('data-sure', '1'); btn.textContent = 'Click again to remove'; return; }
+    btn.disabled = true;
+    call('coachRemoveResource', [n, line], function () { render(); toast('Removed from Module ' + n); }, function (e) { render(); toast(errText(e)); });
+  }
+  function pickFile(n) { $('file_' + n).click(); }
+  function dropFile(e, n) { e.preventDefault(); e.currentTarget.classList.remove('over'); if (e.dataTransfer.files[0]) uploadFile(n, e.dataTransfer.files[0]); }
+  function uploadFile(n, f) {
+    if (!f) return;
+    if (f.size > 30 * 1024 * 1024) { toast('That file is over 30 MB. Upload it to Google Drive and paste the link instead.'); return; }
+    toast('Uploading ' + f.name + '…');
+    var box = $('drop_' + n); if (box) box.innerHTML = '<div class="spinner" style="margin:0 auto;"></div><b>Uploading ' + esc(f.name) + '…</b>';
+    var r = new FileReader();
+    r.onload = function () {
+      var b64 = String(r.result).split(',')[1] || '';
+      call('coachUploadModule', [n, f.name, f.type || 'application/octet-stream', b64], function () { render(); toast('Uploaded. It shows in the participant\'s Learn tab once the module is released.'); }, function (e) { render(); toast(errText(e)); });
+    };
+    r.onerror = function () { toast('Could not read that file.'); render(); };
+    r.readAsDataURL(f);
+  }
+  function setLink(n, url, btn) {
+    if (btn) btn.disabled = true;
+    call('coachSetModuleLink', [n, url], function () { render(); toast(url ? 'Link saved' : 'File removed from the module'); }, function (e) { if (btn) btn.disabled = false; toast(errText(e)); });
+  }
+  function vModules() {
+    var html = head('Modules', 'Upload module files, release modules, and review weekly challenges');
+    D.modules.forEach(function (m) {
+      var ch = D.challenges.filter(function (c) { return c.module === m.number; })[0];
+      html += '<div class="card"><div class="card-head"><span class="tag">Module ' + esc(m.number) + (m.date ? ' · ' + esc(fmtDate(m.date)) : '') + '</span><h3>' + esc(m.title) + '</h3>' + sw('module', m.number, m.released) + '</div>' +
+        (m.focus ? '<p class="muted" style="margin-bottom:10px;">' + esc(m.focus) + '</p>' : '') +
+        moduleFiles(m);
+      if (ch) {
+        html += '<div class="field" style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px;"><div class="k">Weekly challenge ' + (ch.done ? '· <span style="color:var(--ok)">done ' + esc(fmtDate(ch.doneOn)) + '</span>' : '· not done') + '</div>' +
+          (m.challenge ? '<div class="v">' + esc(m.challenge) + '</div>' : '<div class="v empty">No challenge set (Weekly Challenge column)</div>') +
+          (String(ch.note || '').trim() ? '<div class="qtext">' + esc(ch.note) + '</div>' : '') + '</div>' +
+          (ch.done || String(ch.coachNotes || '').trim() ? noteBox('challenge', m.number, ch.coachNotes) : '');
+      }
+      html += '</div>';
+    });
+    return html;
+  }
+
+  /* ---------- Sessions ---------- */
+  function vSessions() {
+    var doneN = D.sessions.filter(function (s) { return sDone(s); }).length;
+    var html = head('Sessions', doneN + ' of ' + D.sessions.length + ' done · switch a session off when it is done');
+    html += '<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Done?</th><th>Session</th><th>Date</th><th>Time</th><th>Format</th><th>Status</th></tr></thead><tbody>' +
+      D.sessions.map(function (s) {
+        var req = /^requested$/i.test(String(s.status).trim()), dn = sDone(s);
+        var toggle = '<button class="switch" role="switch" aria-checked="' + !dn + '" aria-label="' + esc(s.title) + (dn ? ' is done' : ' is open') + '" onclick="setDone(\'' + esc(s.id) + '\',' + !dn + ', this)"><span class="tr"></span>' + (dn ? 'Done' : 'Open') + '</button>';
+        var st = req ? '<span class="pill warm">Requested</span> <button class="btn orange small" style="margin-top:6px;" onclick="confirmS(\'' + esc(s.id) + '\', this)">' + icon('check') + 'Confirm</button>' :
+          /\(missed\)/i.test(String(s.status)) ? '<span class="pill">Done · missed</span>' :
+          dn ? '<span class="pill">Done</span>' :
+          /^missed$/i.test(String(s.status).trim()) ? '<span class="pill warm">Missed · waiting for confirmation</span> <button class="btn small" style="margin-top:6px;" onclick="closeMissed(\'' + esc(s.id) + '\', this)">' + icon('check') + 'Mark as done</button>' :
+          /^(confirmed|booked)$/i.test(String(s.status).trim()) ? '<span class="pill ok">Confirmed</span>' : '<span class="pill ink">' + esc(s.status || 'Upcoming') + '</span>';
+        return '<tr class="' + (dn ? 'sdone' : '') + '"><td>' + toggle + '</td><td><b>' + esc(s.title) + '</b>' + (s.notes ? '<div class="meta">' + esc(s.notes) + '</div>' : '') + '</td><td>' + esc(s.date ? fmtDate(s.date) : (s.dateNote || 'TBC')) + '</td><td>' + esc(s.time || 'TBC') + '</td><td>' + esc(s.mode || 'TBC') + (s.location ? '<div class="meta">' + (/^https?:/i.test(s.location) ? '<a href="' + esc(s.location) + '" target="_blank" rel="noopener">Link</a>' : esc(s.location)) + '</div>' : '') + '</td><td>' + st + '</td></tr>';
+      }).join('') + '</tbody></table></div></div>' +
+      '<p class="meta">Confirm moves the calendar hold to the requested time, invites ' + esc(D.participant.email || 'the participant') + ' and emails a confirmation. Switching a session to Done emails a thank-you and next steps to ' + esc(D.participant.email || 'the participant') + ', with you in cc.</p>';
+    return html;
+  }
+  function sDone(s) { return /^(done|completed?)\b/i.test(String(s.status || '').trim()); }
+  function setDone(id, done, el) {
+    var s = findBy(D.sessions, 'id', id);
+    if (s) s.status = done ? 'Done' : (/^(confirmed|booked)$/i.test(String(s.status)) ? s.status : 'Upcoming');
+    quietCall('coachSetSessionDone', [id, done], done ? 'Marked as done. Emailing ' + (D.participant.email || 'the participant') + '…' : 'Marked as open');
+  }
+  function closeMissed(id, btn) {
+    var s = findBy(D.sessions, 'id', id);
+    if (s) s.status = 'Done (missed)';
+    quietCall('coachCloseMissed', [id], 'Marked as done (missed). No email sent.');
+  }
+    function confirmS(id, btn) {
+    btn.disabled = true; btn.lastChild.textContent = 'Confirming…';
+    call('coachConfirm', [id], function () { render(); toast('Session confirmed and invite sent'); }, function (e) { btn.disabled = false; btn.lastChild.textContent = 'Confirm'; toast(errText(e)); });
+  }
+
+  /* ---------- Agreed Goal editor ---------- */
+  var AG_FIELDS = [['specific', 'S · Specific', 4], ['measurable', 'M · Measurable (one item per line)', 7], ['measuredBy', 'Note under Measurable', 1], ['achievable', 'A · Achievable', 3], ['relevant', 'R · Relevant', 3], ['timebound', 'T · Time-bound', 1]];
+  function agreedGoalEditor() {
+    var g = D.agreedGoal || {}, first = String(D.participant.name || 'the participant').split(' ')[0];
+    var html = '<div class="card" style="border:2px solid var(--indigo);"><div class="card-head"><span class="tag">Official goal</span><h3>Agreed Goal</h3>' +
+      '<span class="pill ' + (g.visible ? 'ok' : '') + '">' + (g.visible ? 'Visible to ' + esc(first) : 'Hidden from ' + esc(first)) + '</span></div>' +
+      '<p class="muted" style="margin-bottom:6px;">Written as ' + esc(first) + ' ("I"). It shows below his initial goals in his Goals tab, together with the Tracker. ' +
+      '<button class="btn line small" onclick="go(\'tracker\')">' + (g.visible ? 'Hide' : 'Show') + ' it from the Tracker section</button></p><div id="agForm">';
+    AG_FIELDS.forEach(function (f) {
+      html += '<div class="note" style="margin-top:10px;"><label for="ag_' + f[0] + '">' + esc(f[1]) + '</label><textarea id="ag_' + f[0] + '" rows="' + f[2] + '" data-orig="' + esc(g[f[0]] || '') + '" oninput="agDirty()">' + esc(g[f[0]] || '') + '</textarea></div>';
+    });
+    html += '<div class="grid2" style="margin-top:10px;"><div class="note"><label for="ag_target">Target date (YYYY-MM-DD)</label><input id="ag_target" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:14px var(--body);" value="' + esc(g.target || '') + '" data-orig="' + esc(g.target || '') + '" oninput="agDirty()"></div>' +
+      '<div class="note"><label for="ag_agreedOn">Agreed on (YYYY-MM-DD, optional)</label><input id="ag_agreedOn" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:14px var(--body);" value="' + esc(g.agreedOn || '') + '" data-orig="' + esc(g.agreedOn || '') + '" oninput="agDirty()"></div></div>' +
+      '<div class="actions" style="margin-top:10px;"><button class="btn small" id="agSave" disabled onclick="saveAgreed()">' + icon('check') + 'Save agreed goal</button></div></div></div>';
+    return html;
+  }
+  function agKeys() { return AG_FIELDS.map(function (f) { return f[0]; }).concat(['target', 'agreedOn']); }
+  function agDirty() { var dirty = agKeys().some(function (k) { var el = $('ag_' + k); return el && el.value !== el.getAttribute('data-orig'); }); var b = $('agSave'); if (b) b.disabled = !dirty; }
+  function saveAgreed() {
+    var g = {}; agKeys().forEach(function (k) { var el = $('ag_' + k); if (el) g[k] = el.value; });
+    var b = $('agSave'); b.disabled = true; b.lastChild.textContent = 'Saving…';
+    call('coachSaveAgreedGoal', [g], function () { render(); toast('Agreed goal saved'); }, function (e) { b.disabled = false; b.lastChild.textContent = 'Save agreed goal'; toast(errText(e)); });
+  }
+
+  /* ---------- Tracker ---------- */
+  function setTracker(on) {
+    if (D.tracker) D.tracker.enabled = on;
+    if (D.agreedGoal) D.agreedGoal.visible = on;
+    quietCall('coachSetTracker', [on], on ? 'Tracker is now visible to ' + (String(D.participant.name || 'the participant').split(' ')[0]) + '. He sees it the next time he opens the portal.' : 'Tracker hidden from the participant');
+  }
+  function vTracker() {
+    var t = D.tracker || { enabled: false, activities: [], weeks: [], requests: [] }, first = String(D.participant.name || 'the participant').split(' ')[0];
+    var html = head('Tracker', 'One-minute Friday check-in: ' + t.activities.length + ' activities rated 1 to 5, plus requests taken back');
+    html += '<div class="card"><div class="card-head"><h3>Agreed Goal and Tracker visible to ' + esc(first) + '</h3>' +
+      '<button class="switch" role="switch" aria-checked="' + !!t.enabled + '" onclick="setTracker(' + !t.enabled + ')"><span class="tr"></span>' + (t.enabled ? 'Visible' : 'Hidden') + '</button></div>' +
+      '<p class="muted">' + (t.enabled ? first + ' sees his Agreed Goal (Growth > Goals) and the Tracker (Growth > Tracker).' : 'Hidden. Turn it on once ' + first + ' agrees the goal. You can edit the goal first in Goals & plan, and the activities in the Tracker Activities tab of the Sheet.') + '</p></div>';
+    var weeks = t.weeks || [], last = weeks[weeks.length - 1], prev = weeks[weeks.length - 2];
+    var trend = function (a, b, upGood) { if (a == null || b == null) return ''; var d = a - b; if (!d) return 'Same as last week'; return (d > 0 ? '+' : '') + d + ' vs last week' + ((d > 0) === upGood ? ' ✓' : ''); };
+    html += '<div class="grid3" style="margin-bottom:18px;">' +
+      kpi('Overall (1–10)', last && last.overall ? last.overall + ' / 10' : '–', last && prev && last.overall && prev.overall ? trend(+last.overall, +prev.overall, true) : (weeks.length ? weeks.length + ' week' + (weeks.length === 1 ? '' : 's') + ' rated' : 'No weeks rated yet'), false) +
+      kpi('Latest score', last ? last.total + ' / ' + last.max : '–', last && prev ? trend(last.total, prev.total, true) : 'Activities, out of ' + (t.activities.length * 5), false) +
+      kpi('Taken back', last && last.takenBack != null ? last.takenBack + (last.requests ? ' of ' + last.requests : '') : '–', last && prev && last.takenBack != null && prev.takenBack != null ? trend(last.takenBack, prev.takenBack, false) : 'Requests he took back that week', false) +
+      '</div>';
+    if (weeks.length) {
+      html += '<div class="card"><h3 style="margin-bottom:8px;">Week by week</h3><div class="table-wrap"><table class="table"><thead><tr><th>Activity</th>' +
+        weeks.map(function (w) { return '<th>' + esc(fmtDate(w.week)) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        t.activities.map(function (a) { return '<tr><td>' + esc(a.n) + '. ' + esc(a.text) + '</td>' + weeks.map(function (w) { var v = w.ratings[a.n]; return '<td style="text-align:center;font-weight:700;color:' + (v >= 4 ? 'var(--ok)' : v && v <= 2 ? 'var(--danger)' : 'var(--ink)') + ';">' + (v || '–') + '</td>'; }).join('') + '</tr>'; }).join('') +
+        '<tr><td><b>Total</b></td>' + weeks.map(function (w) { return '<td style="text-align:center;"><b>' + w.total + '/' + w.max + '</b></td>'; }).join('') + '</tr>' +
+        '<tr><td>Requests taken back</td>' + weeks.map(function (w) { return '<td style="text-align:center;">' + (w.takenBack == null ? '–' : w.takenBack + (w.requests ? ' of ' + w.requests : '')) + '</td>'; }).join('') + '</tr>' +
+        (weeks.some(function (w) { return w.overall; }) ? '<tr><td>Overall (1–10)</td>' + weeks.map(function (w) { return '<td style="text-align:center;">' + (w.overall || '–') + '</td>'; }).join('') + '</tr>' : '') +
+        '</tbody></table></div></div>';
+      weeks.slice().reverse().forEach(function (w) {
+        html += '<div class="card"><div class="card-head"><span class="tag">Week ending ' + esc(fmtDate(w.week)) + '</span><h3>' + w.total + ' of ' + w.max + '</h3><span class="meta">Saved ' + esc(fmtStamp(w.updated)) + '</span></div>' +
+          (w.overall ? field('Overall (1–10)', w.overall + ' / 10') : '') +
+          (function () { var b = w.blockers || {}; var ks = t.activities.filter(function (a) { return b[a.n]; }); return ks.length ? '<div class="field"><div class="k">What got in the way</div><div class="v">' + ks.map(function (a) { return '<b>' + esc(a.text.split(':')[0]) + ':</b> ' + esc(b[a.n]); }).join('<br>') + '</div></div>' : ''; })() +
+          (w.did && Object.keys(w.did).length ? field('What he did (weekly challenge)', Object.keys(w.did).map(function (k) { return 'Module ' + k + ': ' + w.did[k]; }).join('\n\n')) : '') + field('His note', w.note) + (w.helped ? field('What helped', w.helped) : '') + (w.blocked ? field('What got in the way', w.blocked) : '') + (w.adjust ? field('Adjustment', w.adjust) : '') + noteBox('week', w.week, w.coachNotes) + '</div>';
+      });
+    } else html += '<div class="empty-box" style="margin-bottom:14px;">No weeks rated yet.' + (t.enabled ? ' ' + esc(first) + ' rates each week on Friday.' : '') + '</div>';
+    var rq = t.requests || [];
+    html += '<h2 style="margin:22px 0 12px;">Request log <span class="muted small">(optional for him · ' + rq.length + ')</span></h2>';
+    if (!rq.length) html += '<div class="empty-box">Nothing logged. The log is optional; his take-backs come from the weekly check-in.</div>';
+    else html += '<div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Logged</th><th>Request</th><th>Owner</th><th>Level</th><th>Agreement</th><th>Check-in</th><th>Status</th><th>Taken back</th><th>Owner feedback</th></tr></thead><tbody>' +
+      rq.map(function (q) { var lv = parseInt(q.level, 10); return '<tr><td>' + esc(fmtDate(q.created)) + '</td><td><b>' + esc(q.request) + '</b>' + (q.by ? '<div class="meta">From ' + esc(q.by) + '</div>' : '') + (q.notes ? '<div class="meta">' + esc(q.notes) + '</div>' : '') + '</td><td>' + esc(q.owner || '–') + '</td><td>' + (lv ? lv + ' · ' + esc(t.levels[lv - 1]) : '–') + '</td><td>' + (q.agreement ? '<span class="pill ok">Yes</span>' : '<span class="pill">No</span>') + '</td><td>' + esc(q.checkin ? fmtDate(q.checkin) : '–') + '</td><td>' + esc(q.status) + '</td><td>' + (q.takenBack ? '<span class="pill warm">Yes</span>' : 'No') + '</td><td>' + esc(q.feedback || '–') + '</td></tr>'; }).join('') +
+      '</tbody></table></div></div>';
+    html += '<p class="meta">The activities come from the Tracker Activities tab in the Sheet (set Active to No to hide one). Weekly ratings are in Weekly Tracker; requests in Request Log.</p>';
+    return html;
+  }
+
+  load();
+</script>
+</body>
+</html>
