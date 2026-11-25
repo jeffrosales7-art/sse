@@ -1,0 +1,31 @@
+ID,Area,Type,Question,Required
+P1,Moving from doing to directing,rating,"I spend most of my time on work only I can do as a leader, not on tasks my team could handle.",Yes
+P2,Moving from doing to directing,rating,I hold back from jumping in to fix problems myself when a team member could solve them.,Yes
+P3,Moving from doing to directing,rating,"I measure my success by what my team achieves, not by my own individual output.",Yes
+P4,Moving from doing to directing,rating,"I set aside regular time for planning, coaching and thinking ahead, not just day-to-day work.",Yes
+P5,Moving from doing to directing,rating,I am comfortable letting go of work I used to be the expert in.,Yes
+P6,Moving from doing to directing,text,What work are you still doing yourself that you should be directing others to do? What keeps you holding on to it?,Yes
+P7,Delegation and ownership,rating,"I delegate the whole outcome, not just the steps, and let the person decide how to get there.",Yes
+P8,Delegation and ownership,rating,"When I delegate, I am clear about the result, the deadline and how much authority the person has.",Yes
+P9,Delegation and ownership,rating,I match what I delegate to each person's strengths and development needs.,Yes
+P10,Delegation and ownership,rating,"Once I delegate something, I avoid taking it back or redoing it myself.",Yes
+P11,Delegation and ownership,rating,"My team members take ownership and bring me solutions, not just problems.",Yes
+P12,Delegation and ownership,text,"Think of a task you delegated recently. What went well, and what would you do differently?",Yes
+P13,Managing priorities and saying no,rating,"I know my top three priorities, and they guide how I spend my week.",Yes
+P14,Managing priorities and saying no,rating,"I confidently say ""no"" or ""not now"" to requests that do not fit our priorities.",Yes
+P15,Managing priorities and saying no,rating,"When new work comes in, I discuss trade-offs instead of simply adding it to the list.",Yes
+P16,Managing priorities and saying no,rating,I protect my team from unnecessary work and constantly shifting demands.,Yes
+P17,Managing priorities and saying no,rating,I can explain to stakeholders why something is or is not a priority without feeling guilty.,Yes
+P18,Managing priorities and saying no,text,"Which requests or demands make it hardest for you to say ""no"" or ""not now""? Why?",Yes
+P19,Providing clear direction,rating,My team understands how their work connects to the goals of the wider organization.,Yes
+P20,Providing clear direction,rating,"I explain the ""why"" behind decisions and priorities, not just the ""what"".",Yes
+P21,Providing clear direction,rating,"I set clear expectations about quality, deadlines and what good looks like.",Yes
+P22,Providing clear direction,rating,I check that people have understood my direction before they start.,Yes
+P23,Providing clear direction,rating,"My direction stays consistent, so my team is not confused by changing instructions.",Yes
+P24,Providing clear direction,text,Where does your team most often get unclear about direction? What do you notice when it happens?,Yes
+P25,Follow-through and accountability,rating,"I follow up on commitments at the agreed time, without needing reminders.",Yes
+P26,Follow-through and accountability,rating,"I hold people accountable consistently and fairly, including high performers.",Yes
+P27,Follow-through and accountability,rating,"I address missed commitments early and directly, rather than letting them slide.",Yes
+P28,Follow-through and accountability,rating,Meetings I lead end with clear owners and next steps.,Yes
+P29,Follow-through and accountability,rating,I keep the commitments I make to my team and stakeholders.,Yes
+P30,Follow-through and accountability,text,What gets in the way of follow-through for you or your team? What would help most?,Yes
